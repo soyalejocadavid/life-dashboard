@@ -5,7 +5,22 @@
       "Bash(npm --version)",
       "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --use-npm)",
       "Bash(npx create-next-app@latest life-dashboard-temp --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --use-npm)",
-      "Bash(npx shadcn@latest init -d --defaults)"
+      "Bash(npx shadcn@latest init -d --defaults)",
+      "Bash(npm install framer-motion zustand @tanstack/react-query react-hook-form zod @hookform/resolvers recharts)",
+      "Bash(npm install @serwist/next)",
+      "Bash(npm install serwist)",
+      "Bash(npm run build)",
+      "Bash(npm install @supabase/supabase-js @supabase/ssr)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(find \"/Users/alejandrocadavid/Documents/Personal Projects/Life-dashboard/src/app/\\(app\\)\" -type f -name \"*.tsx\")",
+      "Bash(cat \"/Users/alejandrocadavid/Documents/Personal Projects/Life-dashboard/src/app/\\(app\\)/dashboard/page.tsx\")",
+      "Bash(cat \"/Users/alejandrocadavid/Documents/Personal Projects/Life-dashboard/src/app/\\(app\\)/journal/page.tsx\")",
+      "Bash(cat \"/Users/alejandrocadavid/Documents/Personal Projects/Life-dashboard/src/app/\\(app\\)/onboarding/page.tsx\")",
+      "Bash(cat \"/Users/alejandrocadavid/Documents/Personal Projects/Life-dashboard/src/app/\\(app\\)/plan/page.tsx\")",
+      "Bash(npx next build)",
+      "Bash(npm install @anthropic-ai/sdk)",
+      "Bash(npm install next-themes)",
+      "Bash(gh auth status)"
     ]
   }
 }
