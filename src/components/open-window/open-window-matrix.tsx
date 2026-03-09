@@ -46,13 +46,11 @@ export function OpenWindowMatrix({
             return (
               <motion.div
                 key="central"
-                className="flex aspect-square items-center justify-center rounded-xl border-2 border-primary/30 bg-primary/10 p-2"
+                className="flex min-h-[100px] items-center justify-center rounded-xl border-2 border-primary/30 bg-primary/10 p-2"
                 whileHover={interactive ? { scale: 1.02 } : undefined}
               >
                 <p className="text-center text-[11px] font-semibold leading-tight text-primary">
-                  {plan.centralGoal.length > 80
-                    ? plan.centralGoal.slice(0, 80) + '...'
-                    : plan.centralGoal}
+                  {plan.centralGoal}
                 </p>
               </motion.div>
             )
@@ -74,7 +72,7 @@ export function OpenWindowMatrix({
               }
               aria-label={`Sub-meta: ${subGoal.title}`}
               aria-expanded={isSelected}
-              className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border p-2 text-center transition-all ${
+              className={`relative flex min-h-[100px] flex-col items-center justify-center rounded-xl border p-2 text-center transition-all ${
                 isSelected
                   ? 'ring-2'
                   : 'border-border/50 hover:border-border'
@@ -96,14 +94,8 @@ export function OpenWindowMatrix({
                 className="mb-1 h-2 w-2 rounded-full"
                 style={{ backgroundColor: pillarConfig.color }}
               />
-              {/* Sub-goal title (truncated) */}
-              <p className="text-[11px] font-medium leading-tight text-foreground">
-                {subGoal.title.length > 50
-                  ? subGoal.title.slice(0, 50) + '...'
-                  : subGoal.title}
-              </p>
-              {/* Score */}
-              <div className="mt-1 flex items-center gap-1">
+              {/* Score (below dot, before title) */}
+              <div className="mb-1 flex items-center gap-1">
                 <span
                   className="text-[11px] font-bold"
                   style={{ color: pillarConfig.color }}
@@ -115,6 +107,10 @@ export function OpenWindowMatrix({
                   {subGoal.targetScore.toFixed(1)}
                 </span>
               </div>
+              {/* Sub-goal title (full text, no truncation) */}
+              <p className="text-[11px] font-medium leading-tight text-foreground">
+                {subGoal.title}
+              </p>
               {/* Mini progress */}
               <div className="mt-1 h-1 w-full rounded-full bg-muted">
                 <div

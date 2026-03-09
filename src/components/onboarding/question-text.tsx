@@ -27,6 +27,10 @@ export function QuestionText({
     onAnswer(text.trim())
   }
 
+  const handleEdit = () => {
+    setConfirmed(false)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -69,6 +73,23 @@ export function QuestionText({
             style={{ backgroundColor: accentColor }}
           >
             Continuar
+          </button>
+        </motion.div>
+      )}
+
+      {/* Edit button (after confirmation) */}
+      {confirmed && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex justify-end px-3"
+        >
+          <button
+            onClick={handleEdit}
+            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Editar respuesta
           </button>
         </motion.div>
       )}

@@ -9,10 +9,11 @@ import { PillarRadar } from '@/components/radar/pillar-radar'
 interface PlanReviewProps {
   plan: GeneratedPlan
   scores: Record<PillarId, number>
+  timeHorizonLabel?: string
   onConfirm: () => void
 }
 
-export function PlanReview({ plan, scores, onConfirm }: PlanReviewProps) {
+export function PlanReview({ plan, scores, timeHorizonLabel = '1 año', onConfirm }: PlanReviewProps) {
   // Build target scores map from sub-goals
   const targetScores: Partial<Record<PillarId, number>> = {}
   plan.subGoals.forEach((sg) => {
@@ -51,7 +52,7 @@ export function PlanReview({ plan, scores, onConfirm }: PlanReviewProps) {
           className="mb-6 rounded-xl border border-primary/20 bg-primary/5 p-4"
         >
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-primary/70">
-            Meta Central a 1 Año
+            Meta Central a {timeHorizonLabel}
           </p>
           <p className="text-sm font-medium leading-relaxed">
             {plan.centralGoal}
@@ -100,7 +101,7 @@ export function PlanReview({ plan, scores, onConfirm }: PlanReviewProps) {
             </span>
             <span className="flex items-center gap-1">
               <span className="inline-block h-2 w-2 rounded-full bg-violet-500/20" />
-              Meta a 1 año
+              Meta a {timeHorizonLabel}
             </span>
           </div>
         </motion.div>
@@ -137,7 +138,7 @@ export function PlanReview({ plan, scores, onConfirm }: PlanReviewProps) {
             <p className="text-[11px] text-muted-foreground">Acciones</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold">1 año</p>
+            <p className="text-lg font-bold">{timeHorizonLabel}</p>
             <p className="text-[11px] text-muted-foreground">Horizonte</p>
           </div>
         </motion.div>

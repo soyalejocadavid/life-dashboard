@@ -1,19 +1,32 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { PILLAR_CONFIG } from '@/data/pillars'
 import { PILLARS, type PillarId } from '@/types'
 import { PillarRadar } from '@/components/radar/pillar-radar'
 
+export type TimeHorizon = '6-months' | '1-year' | '2-years' | '5-years'
+
+export const TIME_HORIZON_LABELS: Record<TimeHorizon, string> = {
+  '6-months': '6 meses',
+  '1-year': '1 año',
+  '2-years': '2 años',
+  '5-years': '5 años',
+}
+
+const TIME_HORIZONS: TimeHorizon[] = ['6-months', '1-year', '2-years', '5-years']
+
 interface DiagnosticCompleteProps {
   scores: Record<PillarId, number>
-  onContinue: () => void
+  onContinue: (timeHorizon: TimeHorizon) => void
 }
 
 export function DiagnosticComplete({
   scores,
   onContinue,
 }: DiagnosticCompleteProps) {
+  const [timeHorizon, setTimeHorizon] = useState<TimeHorizon>('1-year')
   // Sort pillars by score (lowest first — most opportunity)
   const sortedPillars = [...PILLARS].sort(
     (a, b) => (scores[a] ?? 0) - (scores[b] ?? 0)
@@ -121,6 +134,33 @@ export function DiagnosticComplete({
           </p>
         </motion.div>
 
+        {/* Time horizon selector */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.8 }}
+          className="mt-8"
+        >
+          <p className="mb-3 text-center text-sm font-medium">
+            ¿A qué horizonte de tiempo quieres apuntar tu plan?
+          </p>
+          <div className="flex justify-center gap-2">
+            {TIME_HORIZONS.map((horizon) => (
+              <button
+                key={horizon}
+                onClick={() => setTimeHorizon(horizon)}
+                className={`rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
+                  timeHorizon === horizon
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+                }`}
+              >
+                {TIME_HORIZON_LABELS[horizon]}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
         {/* CTA */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -129,7 +169,7 @@ export function DiagnosticComplete({
           className="mt-8 flex justify-center pb-8"
         >
           <button
-            onClick={onContinue}
+            onClick={() => onContinue(timeHorizon)}
             className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Generar mi plan de acción

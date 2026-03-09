@@ -13,6 +13,7 @@ import type { GeneratedPlan } from '@/lib/coaching/types'
 interface CoachingRequestBody {
   pillarScores: Record<PillarId, number>
   responses: Record<string, string | number | string[]>
+  timeHorizon?: string
 }
 
 // ============================================================================
@@ -21,9 +22,14 @@ interface CoachingRequestBody {
 
 function buildUserMessage(
   pillarScores: Record<PillarId, number>,
-  responses: Record<string, string | number | string[]>
+  responses: Record<string, string | number | string[]>,
+  timeHorizon?: string
 ): string {
   let message = '## DIAGNÓSTICO COMPLETO DEL USUARIO\n\n'
+
+  if (timeHorizon) {
+    message += `### Horizonte de tiempo seleccionado: ${timeHorizon}\n\n`
+  }
 
   // Pillar scores summary
   message += '### Puntajes por pilar (escala 1-10)\n\n'
@@ -66,7 +72,8 @@ function buildUserMessage(
     }
   }
 
-  message += '\n---\n\nGenera el plan Harada Open Window 64 personalizado basado en este diagnóstico. Responde ÚNICAMENTE con el JSON.'
+  const horizonText = timeHorizon ? ` a ${timeHorizon}` : ' a 1 año'
+  message += `\n---\n\nGenera el plan Harada Open Window 64 personalizado${horizonText} basado en este diagnóstico. Responde ÚNICAMENTE con el JSON.`
 
   return message
 }
@@ -136,14 +143,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { pillarScores, responses } = body
+  const { pillarScores, responses, timeHorizon } = body
 
   if (!pillarScores || typeof pillarScores !== 'object') {
     return NextResponse.json({ error: 'Missing pillarScores' }, { status: 400 })
   }
 
   const anthropic = new Anthropic({ apiKey })
-  const userMessage = buildUserMessage(pillarScores, responses || {})
+  const userMessage = buildUserMessage(pillarScores, responses || {}, timeHorizon)
 
   try {
     const message = await anthropic.messages.create({

@@ -69,9 +69,9 @@ export function PillarRadar({
           points={getGridRing(level)}
           fill="none"
           stroke="currentColor"
-          strokeWidth={level === 10 ? 1 : 0.5}
+          strokeWidth={level === 10 ? 1.5 : 0.75}
           className="text-border"
-          opacity={level === 10 ? 0.4 : 0.2}
+          opacity={level === 10 ? 0.6 : 0.35}
         />
       ))}
 
@@ -88,9 +88,9 @@ export function PillarRadar({
             x2={x}
             y2={y}
             stroke="currentColor"
-            strokeWidth={0.5}
+            strokeWidth={0.75}
             className="text-border"
-            opacity={0.3}
+            opacity={0.45}
           />
         )
       })}

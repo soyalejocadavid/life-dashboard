@@ -45,6 +45,7 @@ export function DiagnosticFlow({ onComplete }: DiagnosticFlowProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const hasInitialized = useRef(false)
+  const answeredQuestions = useRef(new Set<string>())
 
   const saveDiagnosticProgress = useAppStore((s) => s.saveDiagnosticProgress)
   const clearDiagnosticProgress = useAppStore((s) => s.clearDiagnosticProgress)
@@ -102,7 +103,7 @@ export function DiagnosticFlow({ onComplete }: DiagnosticFlowProps) {
         {
           kind: 'coach',
           message:
-            'Bienvenido a tu diagnóstico de vida. Vamos a explorar juntos 7 áreas fundamentales de tu desarrollo personal.',
+            'Bienvenido a tu diagnóstico de vida. Vamos a explorar juntos 7 pilares fundamentales de tu desarrollo personal: Salud Mental, Bienestar Físico, Relaciones, Espiritualidad, Economía, Desarrollo Intelectual y Propósito.',
         },
       ])
 
@@ -127,6 +128,16 @@ export function DiagnosticFlow({ onComplete }: DiagnosticFlowProps) {
     setResponses(progress.responses)
     setScores(progress.scores)
     setCompletedPillars(progress.completedPillars)
+
+    // Mark all previously answered questions so edits don't re-advance
+    for (let pi = 0; pi < progress.completedPillars.length; pi++) {
+      const pillar = DIAGNOSTIC_QUESTIONS[pi]
+      if (pillar) {
+        for (let qi = 0; qi < pillar.questions.length; qi++) {
+          answeredQuestions.current.add(`${pi}-${qi}`)
+        }
+      }
+    }
 
     const nextPillarIndex = progress.completedPillars.length
     if (nextPillarIndex >= PILLARS.length) {
@@ -245,6 +256,9 @@ export function DiagnosticFlow({ onComplete }: DiagnosticFlowProps) {
     const question = DIAGNOSTIC_QUESTIONS[pillarIndex]?.questions[questionIndex]
     if (!question) return
 
+    const questionKey = `${pillarIndex}-${questionIndex}`
+    const isReAnswer = answeredQuestions.current.has(questionKey)
+
     // Save response
     const newResponses = { ...responses, [question.id]: value }
     setResponses(newResponses)
@@ -252,10 +266,13 @@ export function DiagnosticFlow({ onComplete }: DiagnosticFlowProps) {
     // Persist progress after each answer
     persistProgress(pillarIndex, questionIndex, newResponses, scores, completedPillars)
 
-    // Move to next question after a brief pause
-    setTimeout(() => {
-      startQuestion(pillarIndex, questionIndex + 1)
-    }, 600)
+    // Only advance to next question on first answer (not on edits)
+    if (!isReAnswer) {
+      answeredQuestions.current.add(questionKey)
+      setTimeout(() => {
+        startQuestion(pillarIndex, questionIndex + 1)
+      }, 600)
+    }
   }
 
   function finishPillar(pillarIndex: number) {

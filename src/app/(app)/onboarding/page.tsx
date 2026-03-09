@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { DiagnosticFlow } from '@/components/onboarding/diagnostic-flow'
-import { DiagnosticComplete } from '@/components/onboarding/diagnostic-complete'
+import { DiagnosticComplete, type TimeHorizon, TIME_HORIZON_LABELS } from '@/components/onboarding/diagnostic-complete'
 import { PlanReview } from '@/components/onboarding/plan-review'
 import { generateMockPlan } from '@/lib/coaching'
 import { useAppStore } from '@/stores/app-store'
@@ -15,12 +15,13 @@ import type { PillarId } from '@/types'
 
 async function generatePlanFromAPI(
   scores: Record<PillarId, number>,
-  responses: Record<string, string | number | string[]>
+  responses: Record<string, string | number | string[]>,
+  timeHorizon: string
 ): Promise<GeneratedPlan> {
   const res = await fetch('/api/coaching', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pillarScores: scores, responses }),
+    body: JSON.stringify({ pillarScores: scores, responses, timeHorizon }),
   })
 
   if (!res.ok) {
@@ -47,6 +48,7 @@ export default function OnboardingPage() {
     responses: Record<string, string | number | string[]>
   } | null>(null)
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null)
+  const [selectedTimeHorizon, setSelectedTimeHorizon] = useState<TimeHorizon>('1-year')
 
   const handleDiagnosticComplete = useCallback(
     (data: {
@@ -64,15 +66,17 @@ export default function OnboardingPage() {
     []
   )
 
-  const handleGeneratePlan = useCallback(async () => {
+  const handleGeneratePlan = useCallback(async (timeHorizon: TimeHorizon) => {
     if (!diagnosticData) return
+    setSelectedTimeHorizon(timeHorizon)
     setPhase('generating-plan')
 
     try {
       // Call real coaching engine API (Claude Sonnet)
       const plan = await generatePlanFromAPI(
         diagnosticData.scores,
-        diagnosticData.responses
+        diagnosticData.responses,
+        TIME_HORIZON_LABELS[timeHorizon]
       )
       setGeneratedPlan(plan)
       setPhase('plan-review')
@@ -130,6 +134,7 @@ export default function OnboardingPage() {
   }, [router, generatedPlan, diagnosticData, user])
 
   return (
+    <div className="min-h-svh bg-[#F6F6F6] dark:bg-background">
     <AnimatePresence mode="wait">
       {phase === 'diagnostic' && (
         <motion.div
@@ -191,10 +196,12 @@ export default function OnboardingPage() {
           <PlanReview
             plan={generatedPlan}
             scores={diagnosticData.scores}
+            timeHorizonLabel={TIME_HORIZON_LABELS[selectedTimeHorizon]}
             onConfirm={handleConfirmPlan}
           />
         </motion.div>
       )}
     </AnimatePresence>
+    </div>
   )
 }

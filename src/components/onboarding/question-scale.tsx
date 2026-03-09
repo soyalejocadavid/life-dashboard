@@ -32,6 +32,10 @@ export function QuestionScale({
     onAnswer(selected)
   }
 
+  const handleEdit = () => {
+    setConfirmed(false)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -53,7 +57,7 @@ export function QuestionScale({
               disabled={confirmed}
               aria-label={`Puntuación ${value} de 10`}
               aria-pressed={selected === value}
-              className="relative flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
+              className="relative flex h-10 w-full cursor-pointer items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 disabled:cursor-default"
               style={{
                 backgroundColor:
                   selected === value
@@ -99,6 +103,23 @@ export function QuestionScale({
             style={{ backgroundColor: accentColor }}
           >
             Continuar
+          </button>
+        </motion.div>
+      )}
+
+      {/* Edit button (after confirmation) */}
+      {confirmed && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex justify-end px-3"
+        >
+          <button
+            onClick={handleEdit}
+            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Editar respuesta
           </button>
         </motion.div>
       )}
