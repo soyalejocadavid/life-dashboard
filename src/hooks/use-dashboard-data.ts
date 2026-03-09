@@ -48,6 +48,17 @@ export function useDashboardData(): DashboardData {
     [checkinsQuery.data]
   )
 
+  // IMPORTANT: All hooks must be called before any conditional return.
+  // This useCallback must run on every render to satisfy React's rules of hooks.
+  const localIsChecked = useCallback(
+    (actionId: string, frequency: ActionFrequency) => {
+      const periodStart = getPeriodStart(frequency)
+      const key = `${actionId}::${frequency}::${periodStart}`
+      return !!localCheckins[key]
+    },
+    [localCheckins]
+  )
+
   if (userId) {
     // === Supabase path ===
     const actionIdMap = planQuery.data?.actionIdMap ?? {}
@@ -80,17 +91,6 @@ export function useDashboardData(): DashboardData {
   }
 
   // === Zustand path (dev / not logged in) ===
-  // Create a new closure over localCheckins so the reference changes when checkins update.
-  // This ensures useTodaysActions' useMemo re-runs when a check-in is toggled.
-  const localIsChecked = useCallback(
-    (actionId: string, frequency: ActionFrequency) => {
-      const periodStart = getPeriodStart(frequency)
-      const key = `${actionId}::${frequency}::${periodStart}`
-      return !!localCheckins[key]
-    },
-    [localCheckins]
-  )
-
   return {
     plan: localPlan,
     scores: localScores,
