@@ -168,6 +168,12 @@ export async function getActivePlan(userId: string): Promise<PlanWithDetails | n
   if (error) throw error
   if (!plan) return null
 
+  // Defensive: ensure sub_goals and actions are arrays
+  if (!Array.isArray(plan.sub_goals)) plan.sub_goals = []
+  for (const sg of plan.sub_goals) {
+    if (!Array.isArray(sg.actions)) sg.actions = []
+  }
+
   // Sort sub_goals by position, actions by position
   plan.sub_goals.sort((a: { position: number }, b: { position: number }) => a.position - b.position)
   for (const sg of plan.sub_goals) {

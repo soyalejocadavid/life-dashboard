@@ -20,8 +20,8 @@ export default function DashboardPage() {
   const currentStreak = useAppStore((s) => s.currentStreak)
   const hasHydrated = useAppStore((s) => s._hasHydrated)
   const queryClient = useQueryClient()
-  const { groups, totalActions, completedActions, overallPercentage } =
-    useTodaysActions(plan, isChecked)
+  const { groups = [], totalActions = 0, completedActions = 0, overallPercentage = 0 } =
+    useTodaysActions(plan, isChecked) ?? {}
 
   // Avoid hydration mismatch — wait for localStorage to load
   const [mounted, setMounted] = useState(false)
